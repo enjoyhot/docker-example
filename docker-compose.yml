@@ -1,0 +1,27 @@
+# docker-componse有多个版本(1,2,3)，指定不同版本支持的命令有所区别
+version: '3'
+services:
+  web:
+    build: .
+    # 外部机与容器的端口映射
+    ports:
+     - "5000:5000"
+    # 将外部机路径与容器中的指定路径进行绑定(挂载)，可避免外部机修改代码后无法同步到镜像中(而需要重新构建镜像)
+    volumes:
+     - .:/code
+    # 描述服务之间的依赖关系
+    depends_on:
+      - redis
+    container_name: web-example
+  redis:
+    # 从公共仓库拉取名称为redis，tag为alpine的镜像
+    image: "redis:alpine"
+    container_name: redis-example
+  mysql:
+    image: mysql:5.6
+    ports:
+      - "3306:3306"
+    # 设置环境变量
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+    container_name: mysql
